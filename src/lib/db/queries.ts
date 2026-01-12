@@ -196,11 +196,16 @@ export async function countProperties(
 export async function getFeaturedProperties(
 	limit = 6,
 ): Promise<PropertyWithImages[]> {
-	return getProperties({
-		highlighted: true,
-		status: "disponible",
-		limit,
-	});
+	try {
+		return await getProperties({
+			highlighted: true,
+			status: "disponible",
+			limit,
+		});
+	} catch {
+		console.warn("getFeaturedProperties: Database not available, returning empty array");
+		return [];
+	}
 }
 
 /**
@@ -209,10 +214,15 @@ export async function getFeaturedProperties(
 export async function getPropertiesForSale(
 	options: Omit<GetPropertiesOptions, "operationType"> = {},
 ): Promise<PropertyWithImages[]> {
-	return getProperties({
-		...options,
-		operationType: "venta",
-	});
+	try {
+		return await getProperties({
+			...options,
+			operationType: "venta",
+		});
+	} catch {
+		console.warn("getPropertiesForSale: Database not available, returning empty array");
+		return [];
+	}
 }
 
 /**
@@ -224,10 +234,15 @@ export async function countPropertiesForSale(
 		"operationType" | "limit" | "offset"
 	> = {},
 ): Promise<number> {
-	return countProperties({
-		...options,
-		operationType: "venta",
-	});
+	try {
+		return await countProperties({
+			...options,
+			operationType: "venta",
+		});
+	} catch {
+		console.warn("countPropertiesForSale: Database not available, returning 0");
+		return 0;
+	}
 }
 
 /**
@@ -236,10 +251,15 @@ export async function countPropertiesForSale(
 export async function getPropertiesForRent(
 	options: Omit<GetPropertiesOptions, "operationType"> = {},
 ): Promise<PropertyWithImages[]> {
-	return getProperties({
-		...options,
-		operationType: "alquiler",
-	});
+	try {
+		return await getProperties({
+			...options,
+			operationType: "alquiler",
+		});
+	} catch {
+		console.warn("getPropertiesForRent: Database not available, returning empty array");
+		return [];
+	}
 }
 
 /**
@@ -251,10 +271,15 @@ export async function countPropertiesForRent(
 		"operationType" | "limit" | "offset"
 	> = {},
 ): Promise<number> {
-	return countProperties({
-		...options,
-		operationType: "alquiler",
-	});
+	try {
+		return await countProperties({
+			...options,
+			operationType: "alquiler",
+		});
+	} catch {
+		console.warn("countPropertiesForRent: Database not available, returning 0");
+		return 0;
+	}
 }
 
 /**
@@ -352,42 +377,52 @@ interface GetPostsOptions {
 export async function getPosts(
 	options: GetPostsOptions = {},
 ): Promise<PostWithAuthor[]> {
-	const { status = "publicado", category, limit = 10, offset = 0 } = options;
+	try {
+		const { status = "publicado", category, limit = 10, offset = 0 } = options;
 
-	const conditions = [];
+		const conditions = [];
 
-	if (status) {
-		conditions.push(eq(posts.status, status));
-	}
+		if (status) {
+			conditions.push(eq(posts.status, status));
+		}
 
-	if (category) {
-		conditions.push(eq(posts.category, category));
-	}
+		if (category) {
+			conditions.push(eq(posts.category, category));
+		}
 
-	const result = await db.query.posts.findMany({
-		where: conditions.length > 0 ? and(...conditions) : undefined,
-		with: {
-			author: {
-				columns: {
-					id: true,
-					name: true,
-					avatarUrl: true,
+		const result = await db.query.posts.findMany({
+			where: conditions.length > 0 ? and(...conditions) : undefined,
+			with: {
+				author: {
+					columns: {
+						id: true,
+						name: true,
+						avatarUrl: true,
+					},
 				},
 			},
-		},
-		orderBy: [desc(posts.publishedAt)],
-		limit,
-		offset,
-	});
+			orderBy: [desc(posts.publishedAt)],
+			limit,
+			offset,
+		});
 
-	return result;
+		return result;
+	} catch {
+		console.warn("getPosts: Database not available, returning empty array");
+		return [];
+	}
 }
 
 /**
  * Get recent blog posts
  */
 export async function getRecentPosts(limit = 3): Promise<PostWithAuthor[]> {
-	return getPosts({ limit });
+	try {
+		return await getPosts({ limit });
+	} catch {
+		console.warn("getRecentPosts: Database not available, returning empty array");
+		return [];
+	}
 }
 
 /**
@@ -434,12 +469,17 @@ export async function getAllPostSlugs(): Promise<string[]> {
  * Get unique blog categories
  */
 export async function getBlogCategories(): Promise<string[]> {
-	const result = await db
-		.selectDistinct({ category: posts.category })
-		.from(posts)
-		.where(eq(posts.status, "publicado"));
+	try {
+		const result = await db
+			.selectDistinct({ category: posts.category })
+			.from(posts)
+			.where(eq(posts.status, "publicado"));
 
-	return result
-		.filter((r) => r.category !== null)
-		.map((r) => r.category as string);
+		return result
+			.filter((r) => r.category !== null)
+			.map((r) => r.category as string);
+	} catch {
+		console.warn("getBlogCategories: Database not available, returning empty array");
+		return [];
+	}
 }
