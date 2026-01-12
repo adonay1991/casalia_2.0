@@ -8,6 +8,8 @@ import * as schema from "./schema";
  *
  * Uses connection pooling optimized for serverless environments.
  * The connection is created lazily on first use.
+ *
+ * Note: Using Supabase Connection Pooler (Transaction mode) requires prepare: false
  */
 
 const connectionString = process.env.DATABASE_URL;
