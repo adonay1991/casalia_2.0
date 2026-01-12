@@ -1,0 +1,20 @@
+[test]
+# Enable coverage reporting
+coverage = true
+coverageDir = "coverage"
+
+# Test file patterns
+include = ["__tests__/**/*.test.ts", "__tests__/**/*.test.tsx"]
+
+# Preload setup file
+preload = ["./__tests__/setup.ts"]
+
+# Reporter
+reporters = ["default"]
+
+# Timeout for each test (ms)
+timeout = 5000
+
+[install]
+# Prefer offline installation
+preferOffline = true
