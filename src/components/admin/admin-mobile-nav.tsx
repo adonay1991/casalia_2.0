@@ -42,10 +42,12 @@ export function AdminMobileNav({ user, isOpen, onClose }: AdminMobileNavProps) {
 	const pathname = usePathname();
 	const shouldReduceMotion = useReducedMotion();
 
-	// Close on route change
+	// Close on route change (only if open)
 	useEffect(() => {
-		onClose();
-	}, [pathname, onClose]);
+		if (isOpen) {
+			onClose();
+		}
+	}, [pathname, isOpen, onClose]);
 
 	// Close on escape
 	useEffect(() => {
