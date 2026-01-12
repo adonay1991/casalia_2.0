@@ -8,6 +8,8 @@ import { PropertyForm } from "@/components/admin/property-form";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Nueva Propiedad | Casalia Admin",
 	description: "Crear una nueva propiedad",

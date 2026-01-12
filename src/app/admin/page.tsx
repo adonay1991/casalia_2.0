@@ -20,6 +20,8 @@ import {
 	getTopProperties,
 } from "@/lib/db/admin-queries";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Dashboard | Casalia Admin",
 	description: "Panel de control de Casalia",

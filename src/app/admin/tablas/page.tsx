@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 
 import { getCustomTables } from "./actions";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Tablas | Casalia Admin",
 	description: "Gestiona tablas de datos personalizadas",

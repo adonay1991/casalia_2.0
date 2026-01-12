@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 
 import { createCustomTable } from "../actions";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Nueva Tabla | Casalia Admin",
 	description: "Crear una nueva tabla de datos personalizada",

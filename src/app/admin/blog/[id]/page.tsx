@@ -11,6 +11,8 @@ import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { posts } from "@/lib/db/schema";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Editar Post | Casalia Admin",
 	description: "Editar un post del blog",

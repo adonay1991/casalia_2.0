@@ -13,6 +13,8 @@ import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/auth";
 import { getAdminPosts } from "@/lib/db/admin-queries";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Blog | Casalia Admin",
 	description: "Gestiona los posts del blog de Casalia",

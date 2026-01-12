@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 
 import { getCustomTableBySlug } from "../../actions";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
 	params: Promise<{ tableSlug: string }>;
 }

@@ -13,6 +13,8 @@ import { Card } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/auth";
 import { getAdminProperties } from "@/lib/db/admin-queries";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Propiedades | Casalia Admin",
 	description: "Gestiona las propiedades de Casalia",

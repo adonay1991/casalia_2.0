@@ -8,6 +8,8 @@ import { PostForm } from "@/components/admin/post-form";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Nuevo Post | Casalia Admin",
 	description: "Crear un nuevo post del blog",

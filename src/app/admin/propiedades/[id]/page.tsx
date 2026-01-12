@@ -11,6 +11,8 @@ import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { properties, propertyImages } from "@/lib/db/schema";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Editar Propiedad | Casalia Admin",
 	description: "Editar una propiedad existente",

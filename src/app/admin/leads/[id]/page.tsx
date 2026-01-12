@@ -18,6 +18,8 @@ import { leads } from "@/lib/db/schema";
 import { contactInfo } from "@/types/navigation";
 import { updateLeadStatus } from "./actions";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Detalle de Lead | Casalia Admin",
 	description: "Ver y gestionar un lead",
