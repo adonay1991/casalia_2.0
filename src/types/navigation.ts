@@ -10,6 +10,7 @@ export const mainNavItems: NavItem[] = [
 	{ label: "Alquilar", href: "/alquilar" },
 	{ label: "Blog Inmobiliario", href: "/blog" },
 	{ label: "Team Casalia", href: "/team-casalia" },
+	{ label: "Panel Admin", href: "/admin" },
 ];
 
 export const footerNavItems = {
