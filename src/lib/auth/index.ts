@@ -16,28 +16,38 @@ export type UserRole = "admin" | "agent";
  * Get the current authenticated user from Supabase Auth
  */
 export async function getAuthUser() {
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-	return user;
+	try {
+		const supabase = await createClient();
+		const {
+			data: { user },
+		} = await supabase.auth.getUser();
+		return user;
+	} catch {
+		console.warn("getAuthUser: Failed to get auth user");
+		return null;
+	}
 }
 
 /**
  * Get the current user with their role from the database
  */
 export async function getCurrentUser(): Promise<User | null> {
-	const authUser = await getAuthUser();
+	try {
+		const authUser = await getAuthUser();
 
-	if (!authUser) {
+		if (!authUser) {
+			return null;
+		}
+
+		const dbUser = await db.query.users.findFirst({
+			where: eq(users.id, authUser.id),
+		});
+
+		return dbUser ?? null;
+	} catch {
+		console.warn("getCurrentUser: Database not available");
 		return null;
 	}
-
-	const dbUser = await db.query.users.findFirst({
-		where: eq(users.id, authUser.id),
-	});
-
-	return dbUser ?? null;
 }
 
 /**

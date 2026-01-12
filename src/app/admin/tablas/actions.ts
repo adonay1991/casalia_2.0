@@ -25,12 +25,17 @@ import { createClient } from "@/lib/supabase/server";
  * Get all custom tables
  */
 export async function getCustomTables(): Promise<CustomTable[]> {
-	const tables = await db
-		.select()
-		.from(customTables)
-		.orderBy(desc(customTables.createdAt));
+	try {
+		const tables = await db
+			.select()
+			.from(customTables)
+			.orderBy(desc(customTables.createdAt));
 
-	return tables;
+		return tables;
+	} catch {
+		console.warn("getCustomTables: Database not available");
+		return [];
+	}
 }
 
 /**
@@ -40,23 +45,28 @@ export async function getCustomTableBySlug(slug: string): Promise<{
 	table: CustomTable;
 	columns: CustomColumn[];
 } | null> {
-	const [table] = await db
-		.select()
-		.from(customTables)
-		.where(eq(customTables.slug, slug))
-		.limit(1);
+	try {
+		const [table] = await db
+			.select()
+			.from(customTables)
+			.where(eq(customTables.slug, slug))
+			.limit(1);
 
-	if (!table) {
+		if (!table) {
+			return null;
+		}
+
+		const columns = await db
+			.select()
+			.from(customColumns)
+			.where(eq(customColumns.tableId, table.id))
+			.orderBy(asc(customColumns.order));
+
+		return { table, columns };
+	} catch {
+		console.warn("getCustomTableBySlug: Database not available");
 		return null;
 	}
-
-	const columns = await db
-		.select()
-		.from(customColumns)
-		.where(eq(customColumns.tableId, table.id))
-		.orderBy(asc(customColumns.order));
-
-	return { table, columns };
 }
 
 /**
@@ -199,13 +209,18 @@ export async function saveTableColumns(
  * Get columns for a table
  */
 export async function getTableColumns(tableId: string): Promise<CustomColumn[]> {
-	const columns = await db
-		.select()
-		.from(customColumns)
-		.where(eq(customColumns.tableId, tableId))
-		.orderBy(asc(customColumns.order));
+	try {
+		const columns = await db
+			.select()
+			.from(customColumns)
+			.where(eq(customColumns.tableId, tableId))
+			.orderBy(asc(customColumns.order));
 
-	return columns;
+		return columns;
+	} catch {
+		console.warn("getTableColumns: Database not available");
+		return [];
+	}
 }
 
 // ===========================================
@@ -229,41 +244,57 @@ export async function getTableRows(
 }> {
 	const page = options?.page ?? 1;
 	const limit = options?.limit ?? 50;
-	const offset = (page - 1) * limit;
 
-	const rows = await db
-		.select()
-		.from(customRows)
-		.where(eq(customRows.tableId, tableId))
-		.orderBy(desc(customRows.createdAt))
-		.limit(limit)
-		.offset(offset);
+	try {
+		const offset = (page - 1) * limit;
 
-	// Count total rows
-	const allRows = await db
-		.select()
-		.from(customRows)
-		.where(eq(customRows.tableId, tableId));
+		const rows = await db
+			.select()
+			.from(customRows)
+			.where(eq(customRows.tableId, tableId))
+			.orderBy(desc(customRows.createdAt))
+			.limit(limit)
+			.offset(offset);
 
-	return {
-		rows,
-		total: allRows.length,
-		page,
-		limit,
-	};
+		// Count total rows
+		const allRows = await db
+			.select()
+			.from(customRows)
+			.where(eq(customRows.tableId, tableId));
+
+		return {
+			rows,
+			total: allRows.length,
+			page,
+			limit,
+		};
+	} catch {
+		console.warn("getTableRows: Database not available");
+		return {
+			rows: [],
+			total: 0,
+			page,
+			limit,
+		};
+	}
 }
 
 /**
  * Get a single row by ID
  */
 export async function getRowById(rowId: string): Promise<CustomRow | null> {
-	const [row] = await db
-		.select()
-		.from(customRows)
-		.where(eq(customRows.id, rowId))
-		.limit(1);
+	try {
+		const [row] = await db
+			.select()
+			.from(customRows)
+			.where(eq(customRows.id, rowId))
+			.limit(1);
 
-	return row ?? null;
+		return row ?? null;
+	} catch {
+		console.warn("getRowById: Database not available");
+		return null;
+	}
 }
 
 /**
