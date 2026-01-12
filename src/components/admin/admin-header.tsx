@@ -6,7 +6,7 @@ import {
 	MagnifyingGlass as SearchIcon,
 } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { MOTION_DURATIONS, MOTION_EASINGS } from "@/components/motion";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,12 @@ interface AdminHeaderProps {
 export function AdminHeader({ title, user }: AdminHeaderProps) {
 	const [mobileNavOpen, setMobileNavOpen] = useState(false);
 	const shouldReduceMotion = useReducedMotion();
+
+	// Memoized callback to prevent infinite re-renders in AdminMobileNav
+	// (its useEffect depends on onClose, so we need a stable reference)
+	const handleCloseMobileNav = useCallback(() => {
+		setMobileNavOpen(false);
+	}, []);
 
 	return (
 		<>
@@ -70,7 +76,7 @@ export function AdminHeader({ title, user }: AdminHeaderProps) {
 			<AdminMobileNav
 				user={user}
 				isOpen={mobileNavOpen}
-				onClose={() => setMobileNavOpen(false)}
+				onClose={handleCloseMobileNav}
 			/>
 		</>
 	);
