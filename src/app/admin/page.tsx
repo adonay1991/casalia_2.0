@@ -6,6 +6,7 @@ import {
 } from "@phosphor-icons/react/ssr";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { LeadsTrendChart } from "@/components/admin/charts/leads-trend-chart";
 import { PropertiesStatusChart } from "@/components/admin/charts/properties-status-chart";
@@ -25,20 +26,21 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminDashboardPage() {
-	const user = await getCurrentUser();
-
-	if (!user) {
-		return null;
-	}
-
-	const [stats, recentLeads, topProperties, propertiesByStatus, leadsTrend] =
+	const [user, stats, recentLeads, topProperties, propertiesByStatus, leadsTrend] =
 		await Promise.all([
+			getCurrentUser(),
 			getDashboardStats(),
 			getRecentLeads(5),
 			getTopProperties(5),
 			getPropertiesByStatus(),
 			getLeadsTrend(7),
 		]);
+
+	// Layout already handles redirect if not authenticated
+	// This is a fallback in case layout check was bypassed
+	if (!user) {
+		redirect("/auth/login");
+	}
 
 	return (
 		<>
