@@ -6,6 +6,9 @@ import { PostCard } from "@/components/blog/post-card";
 import { Badge } from "@/components/ui/badge";
 import { getBlogCategories, getPosts } from "@/lib/db/queries";
 
+// Force dynamic rendering (requires DB at runtime, not build time)
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Blog Inmobiliario | Casalia",
 	description:

@@ -19,6 +19,9 @@ import {
 	getRecentPosts,
 } from "@/lib/db/queries";
 
+// Force dynamic rendering (requires DB at runtime, not build time)
+export const dynamic = "force-dynamic";
+
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://casalia.org";
 
 interface BlogPostPageProps {

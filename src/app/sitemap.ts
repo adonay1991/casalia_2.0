@@ -72,57 +72,63 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		},
 	];
 
-	// Get all properties for sale
-	const propertiesForSale = await db
-		.select({
-			slug: properties.slug,
-			updatedAt: properties.updatedAt,
-		})
-		.from(properties)
-		.where(eq(properties.operationType, "venta"));
+	// Dynamic pages from database (with error handling for build without DB)
+	let propertyPagesComprar: MetadataRoute.Sitemap = [];
+	let propertyPagesAlquilar: MetadataRoute.Sitemap = [];
+	let blogPages: MetadataRoute.Sitemap = [];
 
-	const propertyPagesComprar: MetadataRoute.Sitemap = propertiesForSale.map(
-		(property) => ({
+	try {
+		// Get all properties for sale
+		const propertiesForSale = await db
+			.select({
+				slug: properties.slug,
+				updatedAt: properties.updatedAt,
+			})
+			.from(properties)
+			.where(eq(properties.operationType, "venta"));
+
+		propertyPagesComprar = propertiesForSale.map((property) => ({
 			url: `${BASE_URL}/comprar/${property.slug}`,
 			lastModified: property.updatedAt,
 			changeFrequency: "weekly" as const,
 			priority: 0.8,
-		})
-	);
+		}));
 
-	// Get all properties for rent
-	const propertiesForRent = await db
-		.select({
-			slug: properties.slug,
-			updatedAt: properties.updatedAt,
-		})
-		.from(properties)
-		.where(eq(properties.operationType, "alquiler"));
+		// Get all properties for rent
+		const propertiesForRent = await db
+			.select({
+				slug: properties.slug,
+				updatedAt: properties.updatedAt,
+			})
+			.from(properties)
+			.where(eq(properties.operationType, "alquiler"));
 
-	const propertyPagesAlquilar: MetadataRoute.Sitemap = propertiesForRent.map(
-		(property) => ({
+		propertyPagesAlquilar = propertiesForRent.map((property) => ({
 			url: `${BASE_URL}/alquilar/${property.slug}`,
 			lastModified: property.updatedAt,
 			changeFrequency: "weekly" as const,
 			priority: 0.8,
-		})
-	);
+		}));
 
-	// Get all published blog posts
-	const publishedPosts = await db
-		.select({
-			slug: posts.slug,
-			updatedAt: posts.updatedAt,
-		})
-		.from(posts)
-		.where(eq(posts.status, "publicado"));
+		// Get all published blog posts
+		const publishedPosts = await db
+			.select({
+				slug: posts.slug,
+				updatedAt: posts.updatedAt,
+			})
+			.from(posts)
+			.where(eq(posts.status, "publicado"));
 
-	const blogPages: MetadataRoute.Sitemap = publishedPosts.map((post) => ({
-		url: `${BASE_URL}/blog/${post.slug}`,
-		lastModified: post.updatedAt,
-		changeFrequency: "monthly" as const,
-		priority: 0.7,
-	}));
+		blogPages = publishedPosts.map((post) => ({
+			url: `${BASE_URL}/blog/${post.slug}`,
+			lastModified: post.updatedAt,
+			changeFrequency: "monthly" as const,
+			priority: 0.7,
+		}));
+	} catch {
+		// Database not available, return only static pages
+		console.warn("Sitemap: Database not available, returning only static pages");
+	}
 
 	return [
 		...staticPages,

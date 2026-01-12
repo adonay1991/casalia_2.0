@@ -311,14 +311,20 @@ export async function getSimilarProperties(
 export async function getAllPropertySlugs(): Promise<
 	{ slug: string; operationType: string }[]
 > {
-	const result = await db
-		.select({
-			slug: properties.slug,
-			operationType: properties.operationType,
-		})
-		.from(properties);
+	try {
+		const result = await db
+			.select({
+				slug: properties.slug,
+				operationType: properties.operationType,
+			})
+			.from(properties);
 
-	return result;
+		return result;
+	} catch {
+		// Return empty array if DB is not available (allows build without DB)
+		console.warn("getAllPropertySlugs: Database not available, returning empty array");
+		return [];
+	}
 }
 
 // ===========================================
@@ -410,12 +416,18 @@ export async function getPostBySlug(
  * Get all post slugs (for static generation)
  */
 export async function getAllPostSlugs(): Promise<string[]> {
-	const result = await db
-		.select({ slug: posts.slug })
-		.from(posts)
-		.where(eq(posts.status, "publicado"));
+	try {
+		const result = await db
+			.select({ slug: posts.slug })
+			.from(posts)
+			.where(eq(posts.status, "publicado"));
 
-	return result.map((p) => p.slug);
+		return result.map((p) => p.slug);
+	} catch {
+		// Return empty array if DB is not available (allows build without DB)
+		console.warn("getAllPostSlugs: Database not available, returning empty array");
+		return [];
+	}
 }
 
 /**

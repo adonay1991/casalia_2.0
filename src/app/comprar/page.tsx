@@ -14,6 +14,9 @@ import {
 } from "@/lib/db/queries";
 import type { Property } from "@/lib/db/schema";
 
+// Force dynamic rendering (requires DB at runtime, not build time)
+export const dynamic = "force-dynamic";
+
 const ITEMS_PER_PAGE = 12;
 
 export const metadata: Metadata = {

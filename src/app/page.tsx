@@ -7,6 +7,9 @@ import { AnimatedPropertyCard } from "@/components/property/animated-property-ca
 import { Button } from "@/components/ui/button";
 import { getFeaturedProperties, getRecentPosts } from "@/lib/db/queries";
 
+// Force dynamic rendering (requires DB at runtime, not build time)
+export const dynamic = "force-dynamic";
+
 // Portal logos data
 const portals = [
 	{ name: "Idealista", logo: "/portals/idealista.png" },
