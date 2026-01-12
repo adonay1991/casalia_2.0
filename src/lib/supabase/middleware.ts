@@ -49,37 +49,9 @@ export async function updateSession(request: NextRequest) {
 			return NextResponse.redirect(url);
 		}
 
-		// Verify user exists in our database with a valid role
-		// We use a simple query here to check role without importing Drizzle
-		// (middleware runs in Edge runtime where Drizzle may not work well)
-		const { data: dbUser, error: dbError } = await supabase
-			.from("users")
-			.select("id, role")
-			.eq("id", user.id)
-			.single();
-
-		// Database query error - log and show error
-		if (dbError) {
-			console.error("Middleware DB error:", dbError);
-			const url = request.nextUrl.clone();
-			url.pathname = "/auth/login";
-			url.searchParams.set(
-				"error",
-				`Error de base de datos: ${dbError.message}`,
-			);
-			return NextResponse.redirect(url);
-		}
-
-		// User not in our database or no valid role - deny access
-		if (!dbUser || !["admin", "agent"].includes(dbUser.role)) {
-			const url = request.nextUrl.clone();
-			url.pathname = "/auth/login";
-			url.searchParams.set(
-				"error",
-				"No tienes permisos para acceder al panel de administracion",
-			);
-			return NextResponse.redirect(url);
-		}
+		// Skip database check in middleware to avoid slowdowns
+		// The admin layout will verify user role from database
+		// This makes the middleware faster and more resilient
 	}
 
 	return supabaseResponse;

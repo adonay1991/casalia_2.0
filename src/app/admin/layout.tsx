@@ -10,9 +10,14 @@ export default async function AdminLayout({
 }) {
 	const user = await getCurrentUser();
 
-	// Double-check auth (middleware should catch this, but just in case)
+	// Redirect to login if not authenticated or user not in database
 	if (!user) {
-		redirect("/auth/login");
+		redirect("/auth/login?error=Usuario no encontrado en la base de datos");
+	}
+
+	// Check user has valid role
+	if (!["admin", "agent"].includes(user.role)) {
+		redirect("/auth/login?error=No tienes permisos para acceder al panel");
 	}
 
 	return (
