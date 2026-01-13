@@ -23,8 +23,9 @@ if (!connectionString) {
 const client = postgres(connectionString, {
 	max: 1, // Single connection for serverless
 	idle_timeout: 20, // Close idle connections after 20 seconds
-	connect_timeout: 30, // Connection timeout in seconds (increased for cold starts)
+	connect_timeout: 10, // Connection timeout in seconds
 	prepare: false, // REQUIRED for Supabase Connection Pooler (Transaction mode)
+	ssl: "require", // REQUIRED for Supabase external connections
 });
 
 // Create drizzle instance with schema for type-safe queries
