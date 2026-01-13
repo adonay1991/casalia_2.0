@@ -1,5 +1,6 @@
 /**
  * API Route: Image Processing
+ * TODO: Re-implement after Supabase reconnection
  * Handles image upload, WebP conversion, watermark application, and storage
  */
 
@@ -7,37 +8,24 @@ import { NextResponse } from "next/server";
 
 import { processImage, validateImage } from "@/lib/images";
 import type { ImageUploadResult } from "@/lib/images";
-import { createClient } from "@/lib/supabase/server";
 
-const BUCKET_NAME = "property-images";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 /**
  * POST /api/images/process
- * Processes an image and uploads it to Supabase Storage
+ * Processes an image - TODO: Re-implement storage after Supabase reconnection
  *
  * Body: FormData
  * - file: Image file (required)
  * - propertyId: Property ID for storage path (required)
  * - addWatermark: Whether to add watermark (optional, default: true)
  */
-export async function POST(request: Request): Promise<NextResponse<ImageUploadResult>> {
+export async function POST(
+	request: Request,
+): Promise<NextResponse<ImageUploadResult>> {
 	try {
-		// Get the Supabase client
-		const supabase = await createClient();
-
-		// Check authentication
-		const {
-			data: { user },
-			error: authError,
-		} = await supabase.auth.getUser();
-
-		if (authError || !user) {
-			return NextResponse.json(
-				{ success: false, error: "No autorizado" },
-				{ status: 401 },
-			);
-		}
+		// TODO: Implement authentication check after Supabase reconnection
+		// For now, process images without auth
 
 		// Parse the form data
 		const formData = await request.formData();
@@ -63,7 +51,10 @@ export async function POST(request: Request): Promise<NextResponse<ImageUploadRe
 		// Check file size
 		if (file.size > MAX_FILE_SIZE) {
 			return NextResponse.json(
-				{ success: false, error: "El archivo excede el tamanio maximo de 10MB" },
+				{
+					success: false,
+					error: "El archivo excede el tamanio maximo de 10MB",
+				},
 				{ status: 400 },
 			);
 		}
@@ -85,40 +76,12 @@ export async function POST(request: Request): Promise<NextResponse<ImageUploadRe
 		const addWatermark = addWatermarkStr !== "false";
 		const processed = await processImage(buffer, { addWatermark });
 
-		// Generate unique filename
-		const timestamp = Date.now();
-		const random = Math.random().toString(36).substring(2, 9);
-		const fileName = `${propertyId}/${timestamp}-${random}.webp`;
-
-		// Upload to Supabase Storage
-		const { data, error: uploadError } = await supabase.storage
-			.from(BUCKET_NAME)
-			.upload(fileName, processed.buffer, {
-				contentType: "image/webp",
-				cacheControl: "31536000", // 1 year cache
-				upsert: false,
-			});
-
-		if (uploadError) {
-			console.error("Storage upload error:", uploadError);
-			return NextResponse.json(
-				{ success: false, error: `Error al subir imagen: ${uploadError.message}` },
-				{ status: 500 },
-			);
-		}
-
-		// Get public URL
-		const {
-			data: { publicUrl },
-		} = supabase.storage.from(BUCKET_NAME).getPublicUrl(data.path);
-
+		// TODO: Upload to Supabase Storage after reconnection
+		// For now, return a placeholder response
 		return NextResponse.json({
-			success: true,
-			url: publicUrl,
-			path: data.path,
-			width: processed.width,
-			height: processed.height,
-			size: processed.size,
+			success: false,
+			error:
+				"Almacenamiento no disponible. TODO: Re-implementar conexion con Supabase Storage",
 		});
 	} catch (error) {
 		console.error("Image processing error:", error);

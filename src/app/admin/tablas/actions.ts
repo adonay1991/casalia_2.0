@@ -4,6 +4,7 @@ import { eq, desc, asc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
 	customColumns,
@@ -15,7 +16,6 @@ import {
 	type CustomRow,
 	type CustomTable,
 } from "@/lib/db/schema";
-import { createClient } from "@/lib/supabase/server";
 
 // ===========================================
 // Table Actions
@@ -73,10 +73,8 @@ export async function getCustomTableBySlug(slug: string): Promise<{
  * Create a new custom table
  */
 export async function createCustomTable(formData: FormData): Promise<void> {
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
+	// TODO: Re-implement proper auth after Supabase reconnection
+	const user = await getCurrentUser();
 
 	if (!user) {
 		throw new Error("No autorizado");
@@ -304,10 +302,8 @@ export async function createRow(
 	tableId: string,
 	data: Record<string, unknown>,
 ): Promise<CustomRow> {
-	const supabase = await createClient();
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
+	// TODO: Re-implement proper auth after Supabase reconnection
+	const user = await getCurrentUser();
 
 	const [row] = await db
 		.insert(customRows)

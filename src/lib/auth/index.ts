@@ -2,47 +2,36 @@
  * Authentication Utilities
  *
  * Helper functions for user authentication and authorization.
+ * TODO: Re-implement after Supabase reconnection
  */
 
 import { eq } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { type User, users } from "@/lib/db/schema";
-import { createClient } from "@/lib/supabase/server";
 
 export type UserRole = "admin" | "agent";
 
 /**
  * Get the current authenticated user from Supabase Auth
+ * TODO: Re-implement after Supabase reconnection
  */
 export async function getAuthUser() {
-	try {
-		const supabase = await createClient();
-		const {
-			data: { user },
-		} = await supabase.auth.getUser();
-		return user;
-	} catch {
-		console.warn("getAuthUser: Failed to get auth user");
-		return null;
-	}
+	// TODO: Implement with Supabase Auth
+	return null;
 }
 
 /**
  * Get the current user with their role from the database
+ * TODO: Re-implement after Supabase reconnection
  */
 export async function getCurrentUser(): Promise<User | null> {
+	// TODO: Implement with Supabase Auth + DB lookup
+	// For now, try to get the first admin user for testing
 	try {
-		const authUser = await getAuthUser();
-
-		if (!authUser) {
-			return null;
-		}
-
 		const dbUser = await db.query.users.findFirst({
-			where: eq(users.id, authUser.id),
+			where: eq(users.role, "admin"),
 		});
-
 		return dbUser ?? null;
 	} catch {
 		console.warn("getCurrentUser: Database not available");
