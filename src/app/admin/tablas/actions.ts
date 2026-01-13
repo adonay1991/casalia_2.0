@@ -73,7 +73,6 @@ export async function getCustomTableBySlug(slug: string): Promise<{
  * Create a new custom table
  */
 export async function createCustomTable(formData: FormData): Promise<void> {
-	// TODO: Re-implement proper auth after Supabase reconnection
 	const user = await getCurrentUser();
 
 	if (!user) {
@@ -302,7 +301,6 @@ export async function createRow(
 	tableId: string,
 	data: Record<string, unknown>,
 ): Promise<CustomRow> {
-	// TODO: Re-implement proper auth after Supabase reconnection
 	const user = await getCurrentUser();
 
 	const [row] = await db
