@@ -1,15 +1,18 @@
 import dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
 
-// Load environment variables from .env.local for local development
 dotenv.config({ path: ".env.local" });
+
+if (!process.env.DATABASE_URL) {
+	throw new Error("DATABASE_URL is not set");
+}
 
 export default defineConfig({
 	schema: "./src/lib/db/schema.ts",
-	out: "./supabase/migrations",
+	out: "./drizzle",
 	dialect: "postgresql",
 	dbCredentials: {
-		url: process.env.DATABASE_URL!,
+		url: process.env.DATABASE_URL,
 	},
 	verbose: true,
 	strict: true,

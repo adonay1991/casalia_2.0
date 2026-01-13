@@ -20,11 +20,10 @@ const nextConfig: NextConfig = {
 				protocol: "https",
 				hostname: "images.unsplash.com",
 			},
-			// TODO: Add Supabase storage patterns after reconnection
-			// {
-			// 	protocol: "https",
-			// 	hostname: "*.supabase.co",
-			// },
+			{
+				protocol: "https",
+				hostname: "*.supabase.co",
+			},
 		],
 	},
 	// Note: React Compiler requires babel-plugin-react-compiler
