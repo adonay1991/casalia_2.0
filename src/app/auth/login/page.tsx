@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { createClient } from "@/lib/supabase/server";
+
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
@@ -21,9 +23,15 @@ interface LoginPageProps {
 export default async function LoginPage({ searchParams }: LoginPageProps) {
 	const params = await searchParams;
 
-	// TODO: Re-implement authentication check after Supabase reconnection
-	// For now, redirect to admin directly for testing
-	// redirect(params.redirect || "/admin");
+	// Check if user is already authenticated
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (user) {
+		redirect(params.redirect || "/admin");
+	}
 
 	return (
 		<div className="min-h-screen flex">
